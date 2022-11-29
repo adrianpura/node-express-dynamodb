@@ -5,13 +5,6 @@ const ULID = require('ulid')
 require('dotenv').config()
 const TWITTER_TABLE = process.env.DYNAMODB_TABLE;
 
-// AWS.config.update({
-//     region: process.env.AWS_DEFAULT_REGION,
-//     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-//     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
-// })
-// const dynamoDbClient = new AWS.DynamoDB.DocumentClient()
-
 
 const dynamoDbClient = new AWS.DynamoDB.DocumentClient();
 

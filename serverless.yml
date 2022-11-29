@@ -6,7 +6,7 @@ custom:
     start:
       migrate: true
     stages:
-      - local
+      - dev
 
 provider:
   name: aws
