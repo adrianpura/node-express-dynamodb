@@ -1,0 +1,78 @@
+service: twitter-api
+frameworkVersion: '3'
+
+custom:
+  dynamodb:
+    start:
+      migrate: true
+    stages:
+      - local
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: ap-southeast-1
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+            - dynamodb:BatchGetItem
+            - dynamodb:ConditionCheckItem
+          Resource:
+            - Fn::GetAtt:
+              - TwitterTable 
+              - Arn
+            - Fn::Join: 
+              - "/"
+              - - Fn::GetAtt:
+                  - TwitterTable 
+                  - Arn
+                - "index/GSI1"
+  environment:
+    USERS_TABLE: { Ref: TwitterTable }
+
+functions:
+  api:
+    handler: handler.handler
+    events:
+      - httpApi: '*'
+
+resources:
+  Resources:
+    TwitterTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions: 
+          - AttributeName: "PK"
+            AttributeType: "S"
+          - AttributeName: "SK"
+            AttributeType: "S"
+          - AttributeName: "GSI1PK"
+            AttributeType: "S"
+          - AttributeName: "GSI1SK"
+            AttributeType: "S"
+        KeySchema: 
+          - AttributeName: "PK"
+            KeyType: "HASH"
+          - AttributeName: "SK"
+            KeyType: "RANGE"
+        BillingMode: "PAY_PER_REQUEST"
+        GlobalSecondaryIndexes:
+          - IndexName: 'GSI1'
+            KeySchema:
+            - AttributeName: "GSI1PK"
+              KeyType: "HASH"
+            - AttributeName: "GSI1SK"
+              KeyType: "RANGE"
+            Projection:
+              ProjectionType: ALL
+plugins:
+  - serverless-dynamodb-local
+  - serverless-offline
