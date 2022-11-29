@@ -1,12 +1,5 @@
-service: twitter-api
+service: twitter-api-test1
 frameworkVersion: '3'
-
-custom:
-  dynamodb:
-    start:
-      migrate: true
-    stages:
-      - dev
 
 provider:
   name: aws
@@ -73,6 +66,3 @@ resources:
               KeyType: "RANGE"
             Projection:
               ProjectionType: ALL
-plugins:
-  - serverless-dynamodb-local
-  - serverless-offline
